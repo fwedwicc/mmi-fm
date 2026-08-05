@@ -1,0 +1,1 @@
+export { default as Logomark } from './logomark.png'

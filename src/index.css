@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Chivo+Mono:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+@layer components {
+  .btn {
+    @apply px-3.5 py-2 font-medium text-sm rounded-[11px] transition duration-300 ease-in-out cursor-pointer;
+    font-family: "Chivo Mono", monospace;
+  }
+
+  .btn-outline {
+    @apply border border-neutral-900 text-neutral-900 bg-transparent hover:bg-neutral-900 hover:text-white hover:shadow-lg;
+  }
+
+  .btn-primary {
+    @apply text-neutral-200 bg-neutral-900 hover:bg-neutral-950 hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply text-neutral-900 hover:bg-neutral-300/50 bg-neutral-200/50;
+  }
+
+  .btn-ghost {
+    @apply text-neutral-900 hover:bg-neutral-200/50;
+  }
+
+  .btn-danger {
+    @apply text-red-800 hover:bg-red-300/30 bg-red-200/30;
+  }
+
+  .input-txt {
+    @apply px-3 py-2 text-sm border border-neutral-200 bg-neutral-100/40 hover:bg-neutral-50 rounded-[11px] focus:outline-none focus:ring-[3px] focus:ring-neutral-200/60 focus:border-neutral-300/90 focus:bg-neutral-50 transition duration-300 ease-in-out;
+  }
+
+  /* Custom Scrollbar - for component */
+  ::-webkit-scrollbar {
+    @apply w-1;
+    /* temporary for testing langs */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-500 rounded-full;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-900;
+  }
+}
+
+@layer base {
+
+  body {
+    font-family: "Archivo", sans-serif;
+    @apply bg-[#faf9f5] selection:bg-[#f5ba4c] selection:text-neutral-800;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: auto;
+    font-style: normal;
+    @apply text-[#141413];
+  }
+
+  h1 {
+    @apply md:text-[32px] text-2xl font-[900];
+  }
+
+  h2 {
+    @apply md:text-4xl text-3xl font-semibold;
+  }
+
+  h3 {
+    @apply text-3xl font-semibold;
+  }
+
+  h4 {
+    @apply text-2xl font-medium;
+  }
+
+  h5 {
+    @apply text-xl font-normal;
+  }
+
+  p {
+    @apply text-[#3D3D3A] text-sm;
+  }
+
+  label {
+    @apply block text-sm font-medium text-[#3D3D3A];
+  }
+
+  [type="checkbox"] {
+    @apply size-4 accent-neutral-900 border-none rounded-sm bg-neutral-100/50 transition duration-300 ease-in-out;
+  }
+}
+
+@layer utilities {
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  .flex-end {
+    @apply flex items-center justify-end;
+  }
+
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .font-chivo {
+    font-family: "Chivo Mono", monospace;
+  }
+
+  .font-archivo {
+    font-family: "Archivo", sans-serif;
+  }
+}
