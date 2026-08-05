@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { IconEye, IconEyeClosed } from '@tabler/icons-react'
 import { Button, Input } from '../../shared/components/ui'
 import { Logomark } from '../../assets'
 
 const SignUp = () => {
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
   return (
-    <div className='flex-center h-screen'>
+    <main className='flex-center h-screen'>
       <div className='flex-col flex-center w-full gap-2'>
         {/* Header */}
         <div className='flex-col flex-center gap-0.5 mb-4'>
@@ -29,18 +33,20 @@ const SignUp = () => {
               label="Password"
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               // value={username}
               // onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter password"
+              inputStyles='pr-10'
               required
             />
             <button
               type="button"
-              // onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute bottom-2 right-3 flex items-center text-neutral-400 hover:text-neutral-700 transition-colors"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              className="absolute right-3 top-9 flex items-center text-neutral-400 transition-colors hover:text-neutral-700"
             >
-              {/* {showPassword ? <TbEyeClosed className='size-6 stroke-[1.4px]' /> : <TbEye className='size-6 stroke-[1.4px]' />} */}
+              {showPassword ? <IconEye className='size-5 stroke-[1.8px]' /> : <IconEyeClosed className='size-5 stroke-[1.8px]' />}
             </button>
           </div>
           <div className='relative'>
@@ -48,18 +54,20 @@ const SignUp = () => {
               label="Confirm Password"
               id="confirmPassword"
               name="confirmPassword"
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               // value={username}
               // onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter password"
+              inputStyles='pr-10'
               required
             />
             <button
               type="button"
-              // onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute bottom-2 right-3 flex items-center text-neutral-400 hover:text-neutral-700 transition-colors"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+              className="absolute right-3 top-9 flex items-center text-neutral-400 transition-colors hover:text-neutral-700"
             >
-              {/* {showPassword ? <TbEyeClosed className='size-6 stroke-[1.4px]' /> : <TbEye className='size-6 stroke-[1.4px]' />} */}
+              {showConfirmPassword ? <IconEye className='size-5 stroke-[1.8px]' /> : <IconEyeClosed className='size-5 stroke-[1.8px]' />}
             </button>
           </div>
           <Button
@@ -77,7 +85,7 @@ const SignUp = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }
 

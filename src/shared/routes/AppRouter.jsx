@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 // import { Home, AboutPhased, Features, Help, Download } from '../../pages/landing'
 // import { AuthRoute, ProtectedRoute } from './index'
 // import { Navbar, SimpleNavbar } from '../components/custom/landing'
@@ -7,21 +7,37 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 // import NotFound from '../../pages/NotFound'
 // import CommingSoon from '../../pages/CommingSoon'
 import { SignUp, Login } from '../../pages/authentication'
+import { AccountInformation, Keywords, Sources, Publishers, Review } from '../../pages/onboarding'
+import { Home } from '../../pages/dashboard'
+import { OnboardingLayout, DashboardLayout } from '../layouts'
 // import { useScrollToTop } from '../hooks'
 // import { useLinksStore } from '../store'
 
 const AppContent = () => {
-  const location = useLocation()
-
   // fix scroll to top
   // useScrollToTop()
 
   return (
     <>
       <Routes>
-        {/* GLOBAL ROUTES */}
+        {/* AUTHENTICATION ROUTES */}
         <Route path='/' element={<SignUp />} />
         <Route path='/login' element={<Login />} />
+
+        {/* ONBOARDING ROUTES */}
+        <Route path='/onboarding' element={<OnboardingLayout />}>
+          <Route index element={<Navigate to='account-info' replace />} />
+          <Route path='account-info' element={<AccountInformation />} />
+          <Route path='keywords' element={<Keywords />} />
+          <Route path='sources' element={<Sources />} />
+          <Route path='publishers' element={<Publishers />} />
+          <Route path='review' element={<Review />} />
+        </Route>
+
+        {/* DASHBOARD ROUTES */}
+        <Route path='/dashboard' element={<DashboardLayout />}>
+          <Route index element={<Home />} />
+        </Route>
 
         {/* AUTHENTICATION ROUTES */}
         {/* <Route path='/login' element={<AuthRoute><Login /></AuthRoute>} />
