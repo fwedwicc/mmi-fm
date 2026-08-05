@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Base styles
-const base = 'inline-flex w-full max-w-100 !h-[32px] font-chivo items-center justify-center rounded-lg text-sm font-medium transition duration-300 ease-in-out'
+const base = 'inline-flex w-full !h-[32px] font-chivo items-center justify-center rounded-lg text-sm font-medium transition duration-300 ease-in-out'
 
 // Size styles
 const sizes = {

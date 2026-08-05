@@ -20,7 +20,7 @@ const Input = ({ label, placeholder, id, type, name, value, onChange, onInput, o
         onInvalid={onInvalid}
         placeholder={placeholder}
         disabled={disabled}
-        className={`flex h-10 w-full rounded-lg border border-[#1F1E1D26] bg-white p-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-3 focus:ring-[#f4ede2] focus:border-[#d3b8a7] transition duration-300 ease-in-out ${disabled ? 'cursor-not-allowed bg-neutral-100 text-neutral-500' : ''} ${inputStyles}`}
+        className={`flex h-10 w-full rounded-lg border border-[#1F1E1D26] bg-white p-3 text-sm text-[#141413] placeholder:text-[#81807b] focus:outline-none focus:ring-3 focus:ring-[#f4ede2] focus:border-[#d3b8a7] transition duration-300 ease-in-out ${disabled ? 'cursor-not-allowed bg-neutral-100 text-neutral-500' : ''} ${inputStyles}`}
       />
     </fieldset>
   )

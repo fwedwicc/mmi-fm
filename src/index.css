@@ -56,7 +56,8 @@
   h1,
   h2,
   h3,
-  h4 {
+  h4,
+  h5 {
     font-weight: auto;
     font-style: normal;
     @apply text-[#141413];
@@ -67,19 +68,19 @@
   }
 
   h2 {
-    @apply md:text-4xl text-3xl font-semibold;
+    @apply md:text-2xl text-xl font-[900];
   }
 
   h3 {
-    @apply text-3xl font-semibold;
+    @apply text-[19px] font-[900];
   }
 
   h4 {
-    @apply text-2xl font-medium;
+    @apply text-lg font-medium;
   }
 
   h5 {
-    @apply text-xl font-normal;
+    @apply text-base font-normal;
   }
 
   p {
