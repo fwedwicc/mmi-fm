@@ -54,7 +54,7 @@ const Login = () => {
             label='SIGN IN'
             // label={isLoading ? 'Logging in…' : 'Log me in'}
             // disabled={isLoading}
-            styles='w-full flex-center mt-0 h-9.5'
+            styles='w-full'
           >
             {/* {isLoading && <Spinner size='18' />} */}
           </Button>

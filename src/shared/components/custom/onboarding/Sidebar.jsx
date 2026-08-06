@@ -26,12 +26,13 @@ const Sidebar = () => {
 
   const activeOpenClass = 'inline-flex w-auto items-center gap-3 px-2 h-9.5 pr-5 rounded-lg text-sm font-bold transition duration-300 ease-in-out bg-[#F0EEE6] text-[#121212]'
   const activeClosedClass = 'inline-flex w-9.5 items-center gap-3 px-2 h-9.5 pr-5 rounded-lg text-sm font-semibold transition duration-300 ease-in-out bg-[#F0EEE6] text-[#121212]'
-  const doneClosedClass = 'inline-flex w-9.5 items-center gap-3 px-2 h-9.5 pr-5 rounded-lg text-sm font-semibold transition duration-300 ease-in-out bg-[#F0EEE6] text-[#121212]'
+  const doneOpenClass = 'inline-flex w-auto items-center gap-3 px-2 h-9.5 pr-5 rounded-lg text-sm font-medium transition duration-300 ease-in-out text-[#121212]'
+  const doneClosedClass = 'inline-flex w-9.5 items-center gap-3 px-2 h-9.5 pr-5 rounded-lg text-sm font-medium transition duration-300 ease-in-out text-[#121212]'
   const defaultOpenClass = 'inline-flex w-auto items-center gap-3 px-2 h-9.5 pr-5 rounded-lg text-sm font-medium transition duration-300 ease-in-out hover:bg-[#F0EEE6] text-[#121212]'
 
   return (
     <aside
-      className='fixed flex flex-col items-start left-0 top-0 p-3 h-full'
+      className={`fixed flex flex-col items-start left-0 top-0 p-3 h-full bg-[#faf9f5] ${isOpen ? 'w-auto border border-[#1F1E1D]/5' : 'w-15 border border-[#faf9f5]/5'} transition-all duration-300 ease-in-out`}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
@@ -69,7 +70,7 @@ const Sidebar = () => {
           const StepIcon = step.icon
 
           const className = isOpen
-            ? (isActive || isDone ? activeOpenClass : defaultOpenClass)
+            ? (isActive ? activeOpenClass : isDone ? doneOpenClass : defaultOpenClass)
             : (isDone ? doneClosedClass : isActive ? activeClosedClass : defaultOpenClass)
 
           return (

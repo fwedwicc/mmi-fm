@@ -4,10 +4,10 @@ import { Sidebar as DashboardSidebar } from '../components/custom/dashboard'
 
 const DashboardLayout = () => {
   return (
-    <div className='min-h-screen'>
+    <main className='min-h-screen'>
       <DashboardSidebar />
       <Outlet />
-    </div>
+    </main>
   )
 }
 

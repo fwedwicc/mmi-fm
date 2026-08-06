@@ -1,10 +1,16 @@
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Button, Input } from '../../shared/components/ui'
 
 const AccountInformation = () => {
 
   return (
-    <main className='flex-center h-screen'>
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className="flex-center min-h-screen p-4 pl-20"
+    >
       <div className='flex-col flex-center w-full gap-2'>
         {/* Sign up form */}
         <div className='w-full max-w-124 p-6.75 space-y-6 bg-[#FAF9F5] border border-[#1F1E1D]/15 shadow-[0px_4px_4px_0px_#00000003,0px_16px_32px_0px_#00000003,0px_2px_64px_0px_#00000005,0px_4px_32px_0px_#00000005] rounded-3xl'>
@@ -51,13 +57,13 @@ const AccountInformation = () => {
             label='NEXT'
             // label={isLoading ? 'Logging in…' : 'Log me in'}
             // disabled={isLoading}
-            styles='w-full flex-center h-9.5'
+            styles='w-full'
           >
             {/* {isLoading && <Spinner size='18' />} */}
           </Button>
         </div>
       </div>
-    </main>
+    </motion.section>
   )
 }
 

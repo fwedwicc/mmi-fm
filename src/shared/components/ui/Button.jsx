@@ -1,13 +1,12 @@
 import React from 'react'
 
 // Base styles
-const base = 'inline-flex w-full !h-[32px] font-chivo items-center justify-center rounded-lg text-sm font-medium transition duration-300 ease-in-out'
+const base = 'inline-flex w-full font-chivo items-center justify-center rounded-lg text-sm font-medium transition duration-300 ease-in-out'
 
 // Size styles
 const sizes = {
-  sm: 'h-7 gap-1',
-  md: 'h-8 gap-1',
-  lg: 'h-9 gap-2',
+  sm: 'h-[32px] gap-1',
+  lg: 'h-[38px] gap-2',
 }
 
 // Variant styles
@@ -24,7 +23,7 @@ const variants = {
   danger: 'bg-red-100 text-red-700 hover:bg-red-200',
 }
 
-const Button = ({ type, styles = '', variant, size = 'md', label, disabled, onClick, children }) => {
+const Button = ({ type, styles = '', variant, size = 'sm', label, disabled, onClick, children }) => {
   const variantStyle = variants[variant] || ''
   const sizeStyle = sizes[size] || ''
 
@@ -38,7 +37,7 @@ const Button = ({ type, styles = '', variant, size = 'md', label, disabled, onCl
         ${variantStyle} 
         ${sizeStyle} 
         ${styles} 
-        ${disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'}
+        ${disabled ? 'cursor-not-allowed opacity-20' : 'cursor-pointer'}
       `}
     >
       {label}

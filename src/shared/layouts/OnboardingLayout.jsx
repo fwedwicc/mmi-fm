@@ -4,10 +4,10 @@ import { Sidebar as OnboardingSidebar } from '../components/custom/onboarding'
 
 const OnboardingLayout = () => {
   return (
-    <div className='min-h-screen'>
+    <main className='min-h-screen'>
       <OnboardingSidebar />
       <Outlet />
-    </div>
+    </main>
   )
 }
 

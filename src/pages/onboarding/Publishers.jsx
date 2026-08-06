@@ -1,10 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Button, Input } from '../../shared/components/ui'
 
 const Publishers = () => {
+
   return (
-    <main className='flex-center h-screen'>
-      <div>Publishers</div>
-    </main>
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className="flex-center min-h-screen p-4 pl-20"
+    >
+      Publishers
+    </motion.section>
   )
 }
 

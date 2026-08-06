@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button, Input } from '../../shared/components/ui'
 
-const Review = () => {
+const Success = () => {
 
   return (
     <motion.section
@@ -11,9 +11,9 @@ const Review = () => {
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="flex-center min-h-screen p-4 pl-20"
     >
-      Review
+      Success
     </motion.section>
   )
 }
 
-export default Review
+export default Success
