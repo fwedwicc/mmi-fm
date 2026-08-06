@@ -41,7 +41,7 @@ export const showToast = {
   },
 
   warning: (message) => {
-    toast(message, {
+    toast.error(message, {
       ...toastStyles,
       style: {
         ...toastStyles.style,

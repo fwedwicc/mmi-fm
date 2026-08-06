@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Base styles
-const base = 'inline-flex w-full font-chivo items-center justify-center rounded-lg text-sm font-medium transition duration-300 ease-in-out'
+const base = 'inline-flex w-full font-chivo items-center justify-center rounded-lg text-sm font-medium text-nowrap transition duration-300 ease-in-out'
 
 // Size styles
 const sizes = {
@@ -12,7 +12,7 @@ const sizes = {
 // Variant styles
 const variants = {
   primary: 'bg-[#121212] text-[#f3f3f3] hover:bg-[#292828] hover:text-[#f5ba4c]',
-  secondary: 'bg-neutral-200 text-neutral-900 hover:bg-neutral-300/60',
+  accent: 'bg-[#f5ba4c] text-[#2b2b26] hover:bg-[#f4ac2d] font-semibold',
   // accentPrimary: 'bg-red-800 text-white hover:bg-red-700',
   // accentSecondary: 'bg-red-100 text-red-800 hover:bg-red-200 font-medium',
   ghost: 'bg-transparent text-neutral-900 hover:bg-neutral-200/50',

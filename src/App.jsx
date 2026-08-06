@@ -7,7 +7,7 @@ const App = () => {
     <>
       <AppRouter />
       <Toaster
-        position="top-center"
+        position="bottom-right"
         reverseOrder={false}
         containerStyle={{
           zIndex: 1000000
