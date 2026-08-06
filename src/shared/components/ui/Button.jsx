@@ -13,10 +13,10 @@ const sizes = {
 const variants = {
   primary: 'bg-[#121212] text-[#f3f3f3] hover:bg-[#292828] hover:text-[#f5ba4c]',
   accent: 'bg-[#f5ba4c] text-[#2b2b26] hover:bg-[#f4ac2d] font-semibold',
+  outline: 'border border-[#b4b3ae] bg-transparent text-[#2b2b26] hover:bg-[#e8e6dc] hover:border-transparent',
   // accentPrimary: 'bg-red-800 text-white hover:bg-red-700',
   // accentSecondary: 'bg-red-100 text-red-800 hover:bg-red-200 font-medium',
   ghost: 'bg-transparent text-neutral-900 hover:bg-neutral-200/50',
-  outline: 'border border-neutral-300 bg-transparent text-neutral-900 hover:bg-neutral-100',
   success: 'bg-green-100 text-green-700 hover:bg-green-200',
   info: 'text-blue-700 hover:bg-blue-300/30 bg-blue-200/30',
   warning: 'text-yellow-700 hover:bg-yellow-300/30 bg-yellow-200/30',

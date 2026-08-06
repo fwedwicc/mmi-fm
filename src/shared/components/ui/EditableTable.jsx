@@ -1,5 +1,7 @@
 import React from 'react'
 import { IconArrowDown } from '@tabler/icons-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import TableAddRows from '../custom/onboarding/TableAddRows'
 
 const EditableTable = ({
   columns,
@@ -32,42 +34,40 @@ const EditableTable = ({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr key={row.id ?? rowIndex} className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#FAF8F1]'}>
-                <td className='w-10 px-3 py-1.5 text-sm text-[#3A3831] border-b border-[#eeeeeb]'>{rowIndex + 1}</td>
-                {columns.map((column) => (
-                  <td key={column.key} className='px-4 py-1.5 border-b border-[#eeeeeb]'>
-                    <input
-                      type='text'
-                      value={row[column.key] ?? ''}
-                      onChange={(event) => onCellChange(rowIndex, column.key, event.target.value)}
-                      placeholder={column.placeholder}
-                      className='w-full border-0 bg-transparent py-1.5 px-3 text-[14px] text-[#2B2923] placeholder:text-[#A7A298] focus:outline-none focus:ring-2 rounded-md focus:ring-[#f4ede2] transition-smooth'
-                    />
-                  </td>
-                ))}
-              </tr>
-            ))}
+            <AnimatePresence initial={false} mode='popLayout'>
+              {rows.map((row, rowIndex) => (
+                <motion.tr
+                  key={row.id ?? rowIndex}
+                  layout
+                  initial={{ opacity: 0, y: -2, scale: 0.99 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -2, scale: 0.99 }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                  className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#f5f4ed]'}
+                >
+                  <td className='w-10 px-3 py-1.5 text-sm text-[#3A3831] border-b border-[#eeeeeb]'>{rowIndex + 1}</td>
+                  {columns.map((column) => (
+                    <td key={column.key} className='px-4 py-1.5 border-b border-[#eeeeeb]'>
+                      <input
+                        type='text'
+                        value={row[column.key] ?? ''}
+                        onChange={(event) => onCellChange(rowIndex, column.key, event.target.value)}
+                        placeholder={column.placeholder}
+                        className='w-full border-0 bg-transparent py-1.5 px-3 text-[14px] text-[#2B2923] placeholder:text-[#A7A298] focus:outline-none focus:ring-2 rounded-md focus:ring-[#f4ede2] hover:bg-[#fcf9f5] transition-smooth'
+                      />
+                    </td>
+                  ))}
+                </motion.tr>
+              ))}
+            </AnimatePresence>
           </tbody>
         </table>
       </div>
-      <div className='mt-auto flex items-center gap-2 border-t border-[#F1EFE4] bg-white px-4 py-2.75 text-sm text-[#3D3A33]'>
-        <span className='font-semibold me-3'>Add</span>
-        <input
-          type='number'
-          min='1'
-          value={addRowsValue}
-          onChange={(event) => onAddRowsValueChange(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault()
-              onAddRows()
-            }
-          }}
-          className='h-6 w-10 rounded-md border border-[#dedddd] bg-white text-center text-sm text-[#2B2923] outline-none transition focus:border-[#CDBEAA] focus:ring-2 focus:ring-[#F3E6D7]'
-        />
-        <span className='text-[#73726c]'>more rows</span>
-      </div>
+      <TableAddRows
+        value={addRowsValue}
+        onChange={onAddRowsValueChange}
+        onAdd={onAddRows}
+      />
     </div>
   )
 }
