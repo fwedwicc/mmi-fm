@@ -1,7 +1,7 @@
 import React from 'react'
 import { IconArrowDown } from '@tabler/icons-react'
 import { AnimatePresence, motion } from 'framer-motion'
-import TableAddRows from '../custom/onboarding/TableAddRows'
+import TableAddRows from '../custom/TableAddRows'
 
 const EditableTable = ({
   columns,
@@ -38,10 +38,9 @@ const EditableTable = ({
               {rows.map((row, rowIndex) => (
                 <motion.tr
                   key={row.id ?? rowIndex}
-                  layout
-                  initial={{ opacity: 0, y: -2, scale: 0.99 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -2, scale: 0.99 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.22, ease: 'easeOut' }}
                   className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#f5f4ed]'}
                 >

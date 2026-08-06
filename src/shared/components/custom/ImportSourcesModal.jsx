@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { IconCloudUpload, IconCheck, IconX } from '@tabler/icons-react'
-import { Button, Modal } from '../../ui'
-import { downloadSourcesCsvTemplate, parseSourcesCsvFile } from '../../../utils/csvSources'
-import { showToast } from '../../../utils/toast'
+import { Button, Modal } from '../ui'
+import { downloadSourcesCsvTemplate, parseSourcesCsvFile } from '../../utils/csvSources'
+import { showToast } from '../../utils/toast'
 
 const formatFileSize = (bytes) => {
   if (bytes < 1024) {

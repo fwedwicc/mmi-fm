@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { IconDownload } from '@tabler/icons-react'
 import { Button, EditableTable } from '../../shared/components/ui'
-import { ImportSourcesModal } from '../../shared/components/custom/onboarding'
+import { ImportSourcesModal } from '../../shared/components/custom'
 
 const Sources = () => {
   const columns = useMemo(

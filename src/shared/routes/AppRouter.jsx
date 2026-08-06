@@ -7,9 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 // import NotFound from '../../pages/NotFound'
 // import CommingSoon from '../../pages/CommingSoon'
 import { SignUp, Login } from '../../pages/authentication'
-import { AccountInformation, Keywords, Sources, Publishers, Review } from '../../pages/onboarding'
-import { Home } from '../../pages/dashboard'
-import { OnboardingLayout, DashboardLayout } from '../layouts'
+import { AccountInformation, Keywords, Sources, Publishers, Review, Home } from '../../pages/dashboard'
+import { DashboardLayout } from '../layouts'
 // import { useScrollToTop } from '../hooks'
 // import { useLinksStore } from '../store'
 
@@ -25,7 +24,7 @@ const AppContent = () => {
         <Route path='/login' element={<Login />} />
 
         {/* ONBOARDING ROUTES */}
-        <Route path='/onboarding' element={<OnboardingLayout />}>
+        <Route path='/onboarding' element={<DashboardLayout />}>
           <Route index element={<Navigate to='account-info' replace />} />
           <Route path='account-info' element={<AccountInformation />} />
           <Route path='keywords' element={<Keywords />} />

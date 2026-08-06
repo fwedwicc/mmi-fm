@@ -1,5 +1,5 @@
 import React from 'react'
-import Button from '../../ui/Button'
+import Button from '../ui/Button'
 
 const TableAddRows = ({ value, onChange, onAdd, label = 'Add', suffix = 'more rows' }) => {
   const handleKeyDown = (event) => {

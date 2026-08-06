@@ -151,9 +151,9 @@ const Keywords = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="flex-center min-h-screen p-4 pl-20"
+      className="flex-center min-h-screen p-4 pb-0 pl-20"
     >
-      <div className='mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-4xl flex-col gap-5'>
+      <div className='mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-3xl flex-col gap-5'>
         <div className='flex gap-4 justify-between'>
           <div>
             <h3>Keywords</h3>
@@ -171,7 +171,7 @@ const Keywords = () => {
             {/* {isLoading && <Spinner size='18' />} */}
           </Button>
         </div>
-        <div className='rounded-3xl bg-white p-6 shadow-[0px_4px_4px_0px_#00000003,0px_16px_32px_0px_#00000003,0px_2px_64px_0px_#00000005,0px_4px_32px_0px_#00000005]'>
+        <div className='rounded-3xl bg-white p-6 flex-1'>
           <p className='leading-none'>Keywords Preview</p>
           <div className='space-y-8 p-10 pt-4'>
             {sections.map((section) => {

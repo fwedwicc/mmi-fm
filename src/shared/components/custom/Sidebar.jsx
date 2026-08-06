@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { IconUserCog, IconHash, IconSpeakerphone, IconBallpen, IconFileDescription, IconCheck } from '@tabler/icons-react'
-import { Logomark, ScoupLogo } from '../../../../assets'
+import { Logomark, ScoupLogo } from '../../../assets'
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false)

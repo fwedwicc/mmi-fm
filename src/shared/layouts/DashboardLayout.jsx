@@ -1,11 +1,11 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import { Sidebar as DashboardSidebar } from '../components/custom/dashboard'
+import { Sidebar } from '../components/custom'
 
 const DashboardLayout = () => {
   return (
     <main className='min-h-screen'>
-      <DashboardSidebar />
+      <Sidebar />
       <Outlet />
     </main>
   )
