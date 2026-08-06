@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { IconDownload } from '@tabler/icons-react'
 import { Button, EditableTable } from '../../shared/components/ui'
-import { ImportSourcesModal } from '../../shared/components/custom'
+import { ImportPublishersModal } from '../../shared/components/custom'
 
 const Publishers = () => {
   const columns = useMemo(
@@ -103,7 +103,7 @@ const Publishers = () => {
           onAddRows={addRows}
           className='flex flex-col flex-1 justify-between h-full'
         />
-        <ImportSourcesModal
+        <ImportPublishersModal
           isOpen={isImportOpen}
           onClose={() => setIsImportOpen(false)}
           onImport={handleImportRows}
