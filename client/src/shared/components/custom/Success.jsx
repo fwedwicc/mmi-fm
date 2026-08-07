@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Logomark } from '../../../assets'
 import { motion } from 'framer-motion'
-import { Button, Input } from '../ui'
+import { Button } from '../ui'
 
 const Success = () => {
+  const navigate = useNavigate()
 
   return (
     <motion.section
@@ -17,14 +19,12 @@ const Success = () => {
         <h1>You're all set!</h1>
         <p className='text-base leading-snug text-center'>Your account is ready. Start creating engaging newsletters. <br /> Connect with your audience and grow your brand! </p>
         <Button
-          type='submit'
+          type='button'
           variant='primary'
           label='GO TO NEWS LETTER DASHBOARD'
-          // label={isLoading ? 'Logging in…' : 'Log me in'}
-          // disabled={isLoading}
+          onClick={() => navigate('/dashboard', { replace: true })}
           styles='mt-5 !w-auto px-3.5'
         >
-          {/* {isLoading && <Spinner size='18' />} */}
         </Button>
       </div>
     </motion.section>

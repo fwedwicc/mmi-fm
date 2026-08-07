@@ -42,8 +42,8 @@ const escapeCsvCell = (value) => {
 }
 
 const fieldAliases = {
-  'website-link': ['website-link', 'url', 'link'].map(normalizeHeader),
-  'publication-name': ['publication-name', 'name', 'publication'].map(normalizeHeader),
+  websiteLink: ['website-link', 'websitelink', 'url', 'link'].map(normalizeHeader),
+  publicationName: ['publication-name', 'publicationname', 'name', 'publication'].map(normalizeHeader),
 }
 
 const resolveColumnIndex = (headers, aliases) => {
@@ -72,16 +72,16 @@ export const parsePublishersCsvText = (csvText) => {
 
   const headerCells = splitCsvLine(lines[0]).map(normalizeHeader)
 
-  const WebsiteLinkIndex = resolveColumnIndex(headerCells, fieldAliases['website-link'])
-  const PublicationNameIndex = resolveColumnIndex(headerCells, fieldAliases['publication-name'])
+  const websiteLinkIndex = resolveColumnIndex(headerCells, fieldAliases.websiteLink)
+  const publicationNameIndex = resolveColumnIndex(headerCells, fieldAliases.publicationName)
 
   return lines.slice(1).map((line, rowIndex) => {
     const cells = splitCsvLine(line)
 
     return {
       id: rowIndex + 1,
-      'website-link': WebsiteLinkIndex >= 0 ? (cells[WebsiteLinkIndex] ?? '') : '',
-      'publication-name': PublicationNameIndex >= 0 ? (cells[PublicationNameIndex] ?? '') : '',
+      websiteLink: websiteLinkIndex >= 0 ? (cells[websiteLinkIndex] ?? '') : '',
+      publicationName: publicationNameIndex >= 0 ? (cells[publicationNameIndex] ?? '') : '',
     }
   })
 }
@@ -107,8 +107,8 @@ export const buildPublishersCsv = (rows) => {
   const header = 'website-link,publication-name'
   const body = rows
     .map((row) => [
-      escapeCsvCell(row['website-link']),
-      escapeCsvCell(row['publication-name']),
+      escapeCsvCell(row.websiteLink),
+      escapeCsvCell(row.publicationName),
     ].join(','))
     .join('\n')
 
@@ -117,9 +117,9 @@ export const buildPublishersCsv = (rows) => {
 
 export const downloadPublishersCsvTemplate = () => {
   const template = buildPublishersCsv([
-    { 'website-link': '', 'publication-name': '' },
-    { 'website-link': '', 'publication-name': '' },
-    { 'website-link': '', 'publication-name': '' },
+    { websiteLink: '', publicationName: '' },
+    { websiteLink: '', publicationName: '' },
+    { websiteLink: '', publicationName: '' },
   ])
 
   const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' })

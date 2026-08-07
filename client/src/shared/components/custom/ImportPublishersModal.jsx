@@ -102,7 +102,7 @@ const ImportPublishersModal = ({ isOpen, onClose, onImport }) => {
     try {
       const rows = await parsePublishersCsvFile(file)
       const filteredRows = rows.filter((row) =>
-        row['website-link']?.trim() || row['publication-name']?.trim()
+        row.websiteLink.trim() || row.publicationName.trim()
       )
 
       clearAsyncHandles()
