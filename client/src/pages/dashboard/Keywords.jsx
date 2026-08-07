@@ -1,8 +1,11 @@
 import React, { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { Button, Badge } from '../../shared/components/ui'
 import { showToast } from '../../shared/utils/toast'
 import { IconX } from '@tabler/icons-react'
+import { dashboardService } from '../../shared/service/dashboardService'
+import { useDashboardStore } from '../../shared/store'
 
 const initialKeywords = {
   main: [],
@@ -51,11 +54,21 @@ const splitKeywordInput = (value) =>
     .filter(Boolean)
 
 const Keywords = () => {
+  const navigate = useNavigate()
+  const completeStep = useDashboardStore(
+    (state) => state.completeStep
+  )
+
   const [keywords, setKeywords] = useState(initialKeywords)
   const [inputs, setInputs] = useState(initialInputs)
+  const [isLoading, setIsLoading] = useState(false)
 
   const totalKeywords = useMemo(
-    () => Object.values(keywords).reduce((count, items) => count + items.length, 0),
+    () =>
+      Object.values(keywords).reduce(
+        (count, items) => count + items.length,
+        0
+      ),
     [keywords]
   )
 
@@ -63,7 +76,10 @@ const Keywords = () => {
     const normalized = keyword.toLowerCase()
 
     return sections.find((section) =>
-      keywords[section.key].some((existing) => existing.toLowerCase() === normalized)
+      keywords[section.key].some(
+        (existing) =>
+          existing.toLowerCase() === normalized
+      )
     )
   }
 
@@ -88,9 +104,14 @@ const Keywords = () => {
 
       if (duplicateSection) {
         const locationLabel =
-          duplicateSection.key === sectionKey ? 'this section' : duplicateSection.title
+          duplicateSection.key === sectionKey
+            ? 'this section'
+            : duplicateSection.title
 
-        showToast.warning(`"${keyword}" is already added in ${locationLabel}`)
+        showToast.warning(
+          `"${keyword}" is already added in ${locationLabel}`
+        )
+
         continue
       }
 
@@ -101,7 +122,10 @@ const Keywords = () => {
     if (filtered.length) {
       setKeywords((current) => ({
         ...current,
-        [sectionKey]: [...current[sectionKey], ...filtered],
+        [sectionKey]: [
+          ...current[sectionKey],
+          ...filtered,
+        ],
       }))
     }
 
@@ -122,7 +146,10 @@ const Keywords = () => {
 
     event.preventDefault()
 
-    const added = addKeywords(sectionKey, inputs[sectionKey])
+    const added = addKeywords(
+      sectionKey,
+      inputs[sectionKey]
+    )
 
     if (added) {
       clearInput(sectionKey)
@@ -130,21 +157,70 @@ const Keywords = () => {
   }
 
   const handleBlur = (sectionKey) => {
-    const added = addKeywords(sectionKey, inputs[sectionKey])
+    const added = addKeywords(
+      sectionKey,
+      inputs[sectionKey]
+    )
 
     if (added) {
       clearInput(sectionKey)
     }
   }
 
-  const removeKeyword = (sectionKey, keywordToRemove) => {
+  const removeKeyword = (
+    sectionKey,
+    keywordToRemove
+  ) => {
     setKeywords((current) => ({
       ...current,
-      [sectionKey]: current[sectionKey].filter((keyword) => keyword !== keywordToRemove),
+      [sectionKey]: current[sectionKey].filter(
+        (keyword) => keyword !== keywordToRemove
+      ),
     }))
   }
 
-  const isCompleteEnabled = totalKeywords > 0
+  const isCompleteEnabled =
+    keywords.main.length > 0 &&
+    keywords.additional.length > 0 &&
+    keywords.excluded.length > 0
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (!isCompleteEnabled || isLoading) {
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      await dashboardService.saveKeywords({
+        main: keywords.main,
+        additional: keywords.additional,
+        excluded: keywords.excluded,
+      })
+
+      // Mark keywords step as completed
+      completeStep('keywords')
+
+      showToast.success(
+        'Keywords saved successfully!'
+      )
+
+      // Move to next onboarding step
+      navigate('/onboarding/sources')
+
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        'Failed to save keywords. Please try again.'
+
+      showToast.error(message)
+
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <motion.section
@@ -153,7 +229,7 @@ const Keywords = () => {
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="flex-center min-h-screen p-4 pb-0 pl-20"
     >
-      <div className='mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-3xl flex-col gap-5'>
+      <form onSubmit={handleSubmit} className='mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-3xl flex-col gap-5'>
         <div className='flex gap-4 justify-between'>
           <div>
             <h3>Keywords</h3>
@@ -163,8 +239,8 @@ const Keywords = () => {
             type='submit'
             variant='primary'
             label='COMPLETE'
-            // label={isLoading ? 'Logging in…' : 'Log me in'}
-            disabled={!isCompleteEnabled}
+            label={isLoading ? 'SAVING…' : 'COMPLETE'}
+            disabled={!isCompleteEnabled || isLoading}
             styles='w-full max-w-36'
             size='lg'
           >
@@ -228,7 +304,7 @@ const Keywords = () => {
             })}
           </div>
         </div>
-      </div>
+      </form>
     </motion.section>
   )
 }

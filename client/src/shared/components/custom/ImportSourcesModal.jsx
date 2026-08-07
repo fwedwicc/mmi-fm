@@ -102,7 +102,7 @@ const ImportSourcesModal = ({ isOpen, onClose, onImport }) => {
     try {
       const rows = await parseSourcesCsvFile(file)
       const filteredRows = rows.filter((row) =>
-        row.twitter.trim() || row.facebook.trim() || row.reddit.trim() || row.youtube.trim()
+        row.x.trim() || row.facebook.trim() || row.reddit.trim() || row.youtube.trim()
       )
 
       clearAsyncHandles()

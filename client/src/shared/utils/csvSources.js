@@ -42,7 +42,7 @@ const escapeCsvCell = (value) => {
 }
 
 const fieldAliases = {
-  twitter: ['twitter', 'x', 'xtwitter', 'xcom'],
+  x: ['twitter', 'x', 'xtwitter', 'xcom'],
   facebook: ['facebook', 'fb'],
   reddit: ['reddit'],
   youtube: ['youtube', 'yt'],
@@ -74,7 +74,7 @@ export const parseSourcesCsvText = (csvText) => {
 
   const headerCells = splitCsvLine(lines[0]).map(normalizeHeader)
 
-  const twitterIndex = resolveColumnIndex(headerCells, fieldAliases.twitter)
+  const xIndex = resolveColumnIndex(headerCells, fieldAliases.x)
   const facebookIndex = resolveColumnIndex(headerCells, fieldAliases.facebook)
   const redditIndex = resolveColumnIndex(headerCells, fieldAliases.reddit)
   const youtubeIndex = resolveColumnIndex(headerCells, fieldAliases.youtube)
@@ -84,7 +84,7 @@ export const parseSourcesCsvText = (csvText) => {
 
     return {
       id: rowIndex + 1,
-      twitter: twitterIndex >= 0 ? (cells[twitterIndex] ?? '') : '',
+      x: xIndex >= 0 ? (cells[xIndex] ?? '') : '',
       facebook: facebookIndex >= 0 ? (cells[facebookIndex] ?? '') : '',
       reddit: redditIndex >= 0 ? (cells[redditIndex] ?? '') : '',
       youtube: youtubeIndex >= 0 ? (cells[youtubeIndex] ?? '') : '',
@@ -113,7 +113,7 @@ export const buildSourcesCsv = (rows) => {
   const header = 'twitter,facebook,reddit,youtube'
   const body = rows
     .map((row) => [
-      escapeCsvCell(row.twitter),
+      escapeCsvCell(row.x),
       escapeCsvCell(row.facebook),
       escapeCsvCell(row.reddit),
       escapeCsvCell(row.youtube),
@@ -125,9 +125,9 @@ export const buildSourcesCsv = (rows) => {
 
 export const downloadSourcesCsvTemplate = () => {
   const template = buildSourcesCsv([
-    { twitter: '', facebook: '', reddit: '', youtube: '' },
-    { twitter: '', facebook: '', reddit: '', youtube: '' },
-    { twitter: '', facebook: '', reddit: '', youtube: '' },
+    { x: '', facebook: '', reddit: '', youtube: '' },
+    { x: '', facebook: '', reddit: '', youtube: '' },
+    { x: '', facebook: '', reddit: '', youtube: '' },
   ])
 
   const blob = new Blob([template], { type: 'text/csv;charset=utf-8;' })

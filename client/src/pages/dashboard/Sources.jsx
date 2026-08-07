@@ -1,13 +1,60 @@
 import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { IconDownload } from '@tabler/icons-react'
 import { Button, EditableTable } from '../../shared/components/ui'
 import { ImportSourcesModal } from '../../shared/components/custom'
+import { dashboardService } from '../../shared/service/dashboardService'
+import { useDashboardStore } from '../../shared/store'
+import { showToast } from '../../shared/utils/toast'
+
+// Accepted domains per platform (checked against the URL's hostname)
+const domainsByKey = {
+  x: ['x.com', 'twitter.com'],
+  facebook: ['facebook.com', 'fb.com'],
+  reddit: ['reddit.com'],
+  youtube: ['youtube.com', 'youtu.be'],
+}
+
+const isValidPlatformUrl = (value, key) => {
+  if (!value?.trim()) {
+    return false
+  }
+
+  let parsedUrl
+
+  try {
+    parsedUrl = new URL(value.trim())
+  } catch {
+    return false
+  }
+
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    return false
+  }
+
+  const allowedDomains = domainsByKey[key]
+
+  if (!allowedDomains) {
+    return true
+  }
+
+  const hostname = parsedUrl.hostname.toLowerCase().replace(/^www\./, '')
+
+  return allowedDomains.some(
+    (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
+  )
+}
 
 const Sources = () => {
+  const navigate = useNavigate()
+  const completeStep = useDashboardStore(
+    (state) => state.completeStep
+  )
+
   const columns = useMemo(
     () => [
-      { key: 'twitter', label: 'X (TWITTER)', placeholder: 'https://x.com/example' },
+      { key: 'x', label: 'X (TWITTER)', placeholder: 'https://x.com/example' },
       { key: 'facebook', label: 'FACEBOOK', placeholder: 'https://facebook.com/example' },
       { key: 'reddit', label: 'REDDIT', placeholder: 'https://reddit.com/r/example' },
       { key: 'youtube', label: 'YOUTUBE', placeholder: 'https://youtube.com/example' },
@@ -16,12 +63,17 @@ const Sources = () => {
   )
 
   const [rows, setRows] = useState([
-    { id: 1, twitter: '', facebook: '', reddit: '', youtube: '' },
+    { id: 1, x: '', facebook: '', reddit: '', youtube: '' },
   ])
   const [rowsToAdd, setRowsToAdd] = useState('1')
   const [isImportOpen, setIsImportOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const hasContent = rows.some((row) => columns.some((column) => row[column.key]?.trim()))
+  const isFormValid =
+    rows.length > 0 &&
+    rows.every((row) =>
+      columns.every((column) => isValidPlatformUrl(row[column.key], column.key))
+    )
 
   const updateCell = (rowIndex, key, value) => {
     setRows((current) =>
@@ -39,7 +91,7 @@ const Sources = () => {
       const nextStartId = current.length > 0 ? Math.max(...current.map((row) => row.id)) + 1 : 1
       const nextRows = Array.from({ length: count }, (_, index) => ({
         id: nextStartId + index,
-        twitter: '',
+        x: '',
         facebook: '',
         reddit: '',
         youtube: '',
@@ -57,12 +109,62 @@ const Sources = () => {
     setRows(
       importedRows.map((row, index) => ({
         id: index + 1,
-        twitter: row.twitter ?? '',
+        x: row.x ?? '',
         facebook: row.facebook ?? '',
         reddit: row.reddit ?? '',
         youtube: row.youtube ?? '',
       }))
     )
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (isLoading) {
+      return
+    }
+
+    if (!isFormValid) {
+      const invalidRowIndex = rows.findIndex((row) =>
+        columns.some((column) => !isValidPlatformUrl(row[column.key], column.key))
+      )
+      const invalidColumn = columns.find(
+        (column) => !isValidPlatformUrl(rows[invalidRowIndex]?.[column.key], column.key)
+      )
+
+      showToast.warning(
+        `Row ${invalidRowIndex + 1}: enter a valid ${invalidColumn?.label ?? ''} link.`
+      )
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      await dashboardService.saveSources({
+        sources: rows.map(({ id, ...source }) => source),
+      })
+
+      // Mark sources step as completed
+      completeStep('sources')
+
+      showToast.success(
+        'Sources saved successfully!'
+      )
+
+      // Move to next onboarding step
+      navigate('/onboarding/publishers')
+
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        'Failed to save sources. Please try again.'
+
+      showToast.error(message)
+
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -72,7 +174,7 @@ const Sources = () => {
       transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="flex-center min-h-screen p-4 pt-5 pl-20"
     >
-      <div className='mx-auto flex min-h-[calc(99vh-1rem)] w-full max-w-5xl flex-col gap-5'>
+      <form onSubmit={handleSubmit} className='mx-auto flex min-h-[calc(99vh-1rem)] w-full max-w-5xl flex-col gap-5'>
         <div className='flex gap-4 justify-between'>
           <div className='flex-1'>
             <h3>Sources</h3>
@@ -92,8 +194,8 @@ const Sources = () => {
             <Button
               type='submit'
               variant='primary'
-              label='NEXT'
-              disabled={!hasContent}
+              label={isLoading ? 'SAVING...' : 'NEXT'}
+              disabled={!isFormValid || isLoading}
               styles='w-full max-w-36'
               size='lg'
             >
@@ -114,7 +216,7 @@ const Sources = () => {
           onClose={() => setIsImportOpen(false)}
           onImport={handleImportRows}
         />
-      </div>
+      </form>
     </motion.section>
   )
 }

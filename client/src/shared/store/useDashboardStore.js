@@ -14,6 +14,24 @@ export const useDashboardStore = create(
       setOnboardingProgress: (progress) =>
         set({
           onboardingProgress: progress
+        }),
+
+      completeStep: (step) =>
+        set((state) => ({
+          onboardingProgress: {
+            ...state.onboardingProgress,
+            [step]: true
+          }
+        })),
+
+      resetOnboardingProgress: () =>
+        set({
+          onboardingProgress: {
+            accountInfo: false,
+            keywords: false,
+            sources: false,
+            publishers: false
+          }
         })
     }),
     {
