@@ -67,24 +67,46 @@ const Sidebar = () => {
         {steps.map((step, index) => {
           const isActive = index === activeIndex
           const isDone = activeIndex > index
+          const isFuture = index > activeIndex
+
           const StepIcon = step.icon
 
           const className = isOpen
-            ? (isActive ? activeOpenClass : isDone ? doneOpenClass : defaultOpenClass)
-            : (isDone ? doneClosedClass : isActive ? activeClosedClass : defaultOpenClass)
+            ? (
+              isActive
+                ? activeOpenClass
+                : isDone
+                  ? doneOpenClass
+                  : defaultOpenClass
+            )
+            : (
+              isDone
+                ? doneClosedClass
+                : isActive
+                  ? activeClosedClass
+                  : defaultOpenClass
+            )
 
           return (
             <Link
               key={step.to}
-              to={step.to}
-              className={className}
+              to={isFuture ? '#' : step.to}
+              onClick={(e) => {
+                if (isFuture) {
+                  e.preventDefault()
+                }
+              }}
+              className={`${className} ${isFuture ? '' : ''
+                }`}
               aria-label={step.label}
+              aria-disabled={isFuture}
             >
               {isDone ? (
                 <IconCheck className='size-5.5 shrink-0 stroke-[1.5px] text-[#14AE5C]' />
               ) : (
                 <StepIcon className='size-5.5 shrink-0 stroke-[1.5px]' />
               )}
+
               <AnimatePresence initial={false}>
                 {isOpen && (
                   <motion.span
@@ -92,7 +114,6 @@ const Sidebar = () => {
                     className='overflow-hidden whitespace-nowrap'
                     initial={{ opacity: 0, x: -10, width: 0 }}
                     animate={{ opacity: 1, x: 0, width: 'auto' }}
-                    // exit={{ opacity: 0, x: -12, width: 0 }}
                     transition={{ duration: 0.2, ease: 'easeInOut' }}
                   >
                     {step.label}

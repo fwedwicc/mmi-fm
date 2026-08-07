@@ -1,14 +1,105 @@
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { useNavigate, Link } from 'react-router-dom'
 import { IconEye, IconEyeClosed } from '@tabler/icons-react'
 import { Button, Input } from '../../shared/components/ui'
 import { Logomark } from '../../assets'
+import { authService } from '../../shared/service/authService'
+import { useUserStore } from '../../shared/store'
+import { showToast } from '../../shared/utils/toast'
 
 const SignUp = () => {
+  const navigate = useNavigate()
+  const setLoading = useUserStore((state) => state.setLoading)
+  const setError = useUserStore((state) => state.setError)
+  const isLoading = useUserStore((state) => state.isLoading)
+
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  // Mirrors backend password rules
+  const isValidPassword = (password) => {
+    return (
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /\d/.test(password) &&
+      /[\W_]/.test(password)
+    )
+  }
+
+  const isFormValid =
+    formData.email.trim() !== '' &&
+    isValidEmail(formData.email) &&
+    isValidPassword(formData.password) &&
+    formData.confirmPassword.trim() !== '' &&
+    formData.password === formData.confirmPassword
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (isLoading) {
+      return
+    }
+
+    if (!isFormValid) {
+      // Give a more specific hint than the generic disabled state would
+      if (!isValidEmail(formData.email)) {
+        showToast.warning('Please enter a valid email address.')
+      } else if (!isValidPassword(formData.password)) {
+        showToast.warning('Password must be 8+ characters with 1 uppercase, 1 number, and 1 special character.')
+      } else if (formData.password !== formData.confirmPassword) {
+        showToast.warning('Passwords do not match.')
+      }
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      await authService.signUp({
+        email: formData.email.trim(),
+        password: formData.password,
+        confirmPassword: formData.confirmPassword
+      })
+
+      showToast.success('Account created! Please log in.')
+      navigate('/login', { replace: true })
+
+    } catch (err) {
+      const message = err.response?.data?.message || 'Failed to create account. Please try again.'
+      setError(message)
+      showToast.error(message)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <main className='flex-center h-screen'>
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className='flex-center h-screen'
+    >
       <div className='flex-col flex-center w-full gap-2'>
         {/* Header */}
         <div className='flex-col flex-center gap-0.5 mb-4'>
@@ -17,14 +108,14 @@ const SignUp = () => {
           <p className='text-base leading-none'>Get instant access and start creating today.</p>
         </div>
         {/* Sign up form */}
-        <div className='w-full max-w-md p-6.75 space-y-4 bg-[#FAF9F5] border border-[#1F1E1D]/15 shadow-[0px_4px_4px_0px_#00000003,0px_16px_32px_0px_#00000003,0px_2px_64px_0px_#00000005,0px_4px_32px_0px_#00000005] rounded-3xl'>
+        <form onSubmit={handleSubmit} className='w-full max-w-md p-6.75 space-y-4 bg-[#FAF9F5] border border-[#1F1E1D]/15 shadow-[0px_4px_4px_0px_#00000003,0px_16px_32px_0px_#00000003,0px_2px_64px_0px_#00000005,0px_4px_32px_0px_#00000005] rounded-3xl'>
           <Input
             label="Email"
             id="email"
             name="email"
             type="email"
-            // value={username}
-            // onChange={(e) => setUsername(e.target.value)}
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Enter your email address"
             required
           />
@@ -34,8 +125,8 @@ const SignUp = () => {
               id="password"
               name="password"
               type={showPassword ? 'text' : 'password'}
-              // value={username}
-              // onChange={(e) => setUsername(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
               placeholder="Enter password"
               inputStyles='pr-10'
               required
@@ -55,8 +146,8 @@ const SignUp = () => {
               id="confirmPassword"
               name="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
-              // value={username}
-              // onChange={(e) => setUsername(e.target.value)}
+              value={formData.confirmPassword}
+              onChange={handleChange}
               placeholder="Enter password"
               inputStyles='pr-10'
               required
@@ -73,19 +164,16 @@ const SignUp = () => {
           <Button
             type='submit'
             variant='primary'
-            label='CREATE ACCOUNT'
-            // label={isLoading ? 'Logging in…' : 'Log me in'}
-            // disabled={isLoading}
+            label={isLoading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
+            disabled={isLoading || !isFormValid}
             styles='w-full'
-          >
-            {/* {isLoading && <Spinner size='18' />} */}
-          </Button>
+          />
           <div className='flex-center pt-2'>
-            <p className='text-[#73726C]'>Already have an account? <a href='/login' className='text-[#141413] hover:text-[#d59215] font-semibold transition-smooth'>Log in</a></p>
+            <p className='text-[#73726C]'>Already have an account? <Link to='/login' className='text-[#141413] hover:text-[#d59215] font-semibold transition-smooth'>Log in</Link></p>
           </div>
-        </div>
+        </form>
       </div>
-    </main>
+    </motion.main>
   )
 }
 
