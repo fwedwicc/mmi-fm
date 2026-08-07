@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import connectDB from './config/db.js'
 import authRoute from './routes/authRoute.js'
 import onboardingRoute from './routes/onboardingRoute.js'
+import dashboardRoute from './routes/dashboardRoute.js'
 
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use('/api/auth', authRoute)
 app.use('/api/onboarding', onboardingRoute)
+app.use('/api/dashboard', dashboardRoute)
 
 app.listen(port, () => {
   connectDB()
