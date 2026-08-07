@@ -15,6 +15,24 @@ const userSchema = new Schema(
       required: true
     },
 
+    firstName: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+
+    lastName: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+
+    jobTitle: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+
     onboardingCompleted: {
       type: Boolean,
       default: false
