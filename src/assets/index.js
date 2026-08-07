@@ -1,2 +1,7 @@
 export { default as Logomark } from './logomark.png'
 export { default as ScoupLogo } from './scouplogo.png'
+export { default as XLogo } from './x-logo.png'
+export { default as FacebookLogo } from './facebook-logo.png'
+export { default as RedditLogo } from './reddit-logo.png'
+export { default as YouTubeLogo } from './youtube-logo.png'
+export { default as PublishersLogo } from './publishers-logo.png'

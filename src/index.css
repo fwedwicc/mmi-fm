@@ -76,7 +76,7 @@
   }
 
   h4 {
-    @apply text-lg font-medium;
+    @apply text-xl font-bold;
   }
 
   h5 {

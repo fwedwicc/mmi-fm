@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { IconCloudUpload, IconCheck, IconX } from '@tabler/icons-react'
+import { IconCloudUpload, IconCheck, IconX, IconFileAlert } from '@tabler/icons-react'
 import { Button, Modal } from '../ui'
 import { downloadPublishersCsvTemplate, parsePublishersCsvFile } from '../../utils/csvPublishers'
 import { showToast } from '../../utils/toast'
@@ -123,6 +123,7 @@ const ImportPublishersModal = ({ isOpen, onClose, onImport }) => {
   }
 
   const canImport = parsedRows.length > 0 && !isLoading
+  const isRejected = !isLoading && !!selectedFile && !error && parsedRows.length === 0
 
   return (
     <Modal
@@ -165,25 +166,44 @@ const ImportPublishersModal = ({ isOpen, onClose, onImport }) => {
           <div
             className={`mt-4 rounded-lg border px-4 py-4 ${isLoading
               ? 'border-[#93cafe] bg-[#f1f8ff]'
-              : 'border-[#88e7a6] bg-[#effdf3]'
+              : isRejected
+                ? 'border-[#f3b4ad] bg-[#fdf1f0]'
+                : 'border-[#88e7a6] bg-[#effdf3]'
               }`}
           >
             <div className='flex items-center gap-3'>
-              <div className={`flex-center size-8 rounded-full ${isLoading ? 'bg-[#70a6f9]' : 'bg-[#1FB56A]'}`}>
+              <div
+                className={`flex-center size-8 rounded-full ${isLoading
+                  ? 'bg-[#70a6f9]'
+                  : isRejected
+                    ? 'bg-[#D8473A]'
+                    : 'bg-[#1FB56A]'
+                  }`}
+              >
                 {isLoading ? (
                   <IconCloudUpload className='size-5.5 stroke-[1.8px] text-white' />
+                ) : isRejected ? (
+                  <IconFileAlert className='size-5.5 stroke-[1.8px] text-white' />
                 ) : (
                   <IconCheck className='size-5.5 stroke-[1.8px] text-white' />
                 )}
               </div>
               <div className='min-w-0 flex-1'>
-                <p className={`truncate text-base font-normal leading-none ${isLoading ? 'text-[#5084f5]' : 'text-[#1f532d]'}`}>
+                <p
+                  className={`truncate text-base font-normal leading-none ${isLoading
+                    ? 'text-[#5084f5]'
+                    : isRejected
+                      ? 'text-[#B3261E]'
+                      : 'text-[#1f532d]'
+                    }`}
+                >
                   {selectedFile.name}
                 </p>
                 <p className='mt-1.5 space-x-2 text-xs leading-none text-[#8A8880]'>
                   <span>{formatFileSize(selectedFile.size)}</span>
-                  {isLoading && <span>•</span>}
-                  <span className='text-[#5084f5]'> {isLoading ? ` ${progress}%` : ''}</span>
+                  {(isLoading || isRejected) && <span>•</span>}
+                  {isLoading && <span className='text-[#5084f5]'>{progress}%</span>}
+                  {isRejected && <span className='text-[#D8473A]'>Not accepted</span>}
                 </p>
                 {isLoading && (
                   <div className='mt-1 h-1 overflow-hidden rounded-full bg-[#e9eaeb]'>
