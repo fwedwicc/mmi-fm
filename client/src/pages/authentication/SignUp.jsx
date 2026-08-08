@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useDashboardStore } from '../../shared/store'
 import { motion } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
 import { IconEye, IconEyeClosed } from '@tabler/icons-react'
@@ -52,6 +53,10 @@ const SignUp = () => {
     formData.confirmPassword.trim() !== '' &&
     formData.password === formData.confirmPassword
 
+  const resetOnboardingProgress = useDashboardStore(
+    (state) => state.resetOnboardingProgress
+  )
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -79,6 +84,9 @@ const SignUp = () => {
         password: formData.password,
         confirmPassword: formData.confirmPassword
       })
+
+      // Clear any stale onboarding progress from a previous account on this browser
+      resetOnboardingProgress()
 
       showToast.success('Account created! Please log in.')
       navigate('/login', { replace: true })

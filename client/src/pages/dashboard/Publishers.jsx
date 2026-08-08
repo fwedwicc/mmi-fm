@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { IconDownload } from '@tabler/icons-react'
@@ -21,7 +21,11 @@ const isValidUrl = (value) => {
   }
 }
 
-const Publishers = () => {
+const emptyRow = (id) => ({ id, websiteLink: '', publicationName: '' })
+
+const Publishers = ({ mode = 'onboarding' }) => {
+  const isDashboard = mode === 'dashboard'
+
   const navigate = useNavigate()
   const completeStep = useDashboardStore(
     (state) => state.completeStep
@@ -35,12 +39,46 @@ const Publishers = () => {
     []
   )
 
-  const [rows, setRows] = useState([
-    { id: 1, websiteLink: '', publicationName: '' },
-  ])
+  const [rows, setRows] = useState([emptyRow(1)])
   const [rowsToAdd, setRowsToAdd] = useState('1')
   const [isImportOpen, setIsImportOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetching, setIsFetching] = useState(isDashboard)
+
+  useEffect(() => {
+    if (!isDashboard) {
+      return
+    }
+
+    const fetchPublishers = async () => {
+      setIsFetching(true)
+
+      try {
+        const data = await dashboardService.getDashboardPublishers()
+        const existing = data?.publishers ?? []
+
+        if (existing.length) {
+          setRows(
+            existing.map((publisher, index) => ({
+              id: index + 1,
+              websiteLink: publisher.websiteLink ?? '',
+              publicationName: publisher.publicationName ?? '',
+            }))
+          )
+        }
+      } catch (error) {
+        const message =
+          error.response?.data?.message ||
+          'Failed to load publishers. Please try again.'
+
+        showToast.error(message)
+      } finally {
+        setIsFetching(false)
+      }
+    }
+
+    fetchPublishers()
+  }, [isDashboard])
 
   const isFormValid =
     rows.length > 0 &&
@@ -64,11 +102,9 @@ const Publishers = () => {
 
     setRows((current) => {
       const nextStartId = current.length > 0 ? Math.max(...current.map((row) => row.id)) + 1 : 1
-      const nextRows = Array.from({ length: count }, (_, index) => ({
-        id: nextStartId + index,
-        websiteLink: '',
-        publicationName: '',
-      }))
+      const nextRows = Array.from({ length: count }, (_, index) =>
+        emptyRow(nextStartId + index)
+      )
 
       return [...current, ...nextRows]
     })
@@ -91,7 +127,7 @@ const Publishers = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    if (isLoading) {
+    if (isLoading || isFetching) {
       return
     }
 
@@ -111,19 +147,23 @@ const Publishers = () => {
     setIsLoading(true)
 
     try {
-      await dashboardService.savePublishers({
+      const payload = {
         publishers: rows.map(({ id, ...publisher }) => publisher),
-      })
+      }
 
-      // Mark publishers step as completed
-      completeStep('publishers')
+      await dashboardService.savePublishers(payload)
 
-      showToast.success(
-        'Publishers saved successfully!'
-      )
+      if (isDashboard) {
+        showToast.success('Publishers saved successfully!')
+      } else {
+        // Mark publishers step as completed
+        completeStep('publishers')
 
-      // Move to next onboarding step
-      navigate('/onboarding/review')
+        showToast.success('Publishers saved successfully!')
+
+        // Move to next onboarding step
+        navigate('/onboarding/review')
+      }
 
     } catch (error) {
       const message =
@@ -164,8 +204,8 @@ const Publishers = () => {
             <Button
               type='submit'
               variant='primary'
-              label={isLoading ? 'SAVING...' : 'NEXT'}
-              disabled={!isFormValid || isLoading}
+              label={isLoading ? 'SAVING...' : isDashboard ? 'SAVE' : 'NEXT'}
+              disabled={!isFormValid || isLoading || isFetching}
               styles='w-full max-w-36'
               size='lg'
             >

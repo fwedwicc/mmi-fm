@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { IconDownload } from '@tabler/icons-react'
@@ -46,7 +46,11 @@ const isValidPlatformUrl = (value, key) => {
   )
 }
 
-const Sources = () => {
+const emptyRow = (id) => ({ id, x: '', facebook: '', reddit: '', youtube: '' })
+
+const Sources = ({ mode = 'onboarding' }) => {
+  const isDashboard = mode === 'dashboard'
+
   const navigate = useNavigate()
   const completeStep = useDashboardStore(
     (state) => state.completeStep
@@ -62,12 +66,48 @@ const Sources = () => {
     []
   )
 
-  const [rows, setRows] = useState([
-    { id: 1, x: '', facebook: '', reddit: '', youtube: '' },
-  ])
+  const [rows, setRows] = useState([emptyRow(1)])
   const [rowsToAdd, setRowsToAdd] = useState('1')
   const [isImportOpen, setIsImportOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetching, setIsFetching] = useState(isDashboard)
+
+  useEffect(() => {
+    if (!isDashboard) {
+      return
+    }
+
+    const fetchSources = async () => {
+      setIsFetching(true)
+
+      try {
+        const data = await dashboardService.getDashboardSources()
+        const existing = data?.sources ?? []
+
+        if (existing.length) {
+          setRows(
+            existing.map((source, index) => ({
+              id: index + 1,
+              x: source.x ?? '',
+              facebook: source.facebook ?? '',
+              reddit: source.reddit ?? '',
+              youtube: source.youtube ?? '',
+            }))
+          )
+        }
+      } catch (error) {
+        const message =
+          error.response?.data?.message ||
+          'Failed to load sources. Please try again.'
+
+        showToast.error(message)
+      } finally {
+        setIsFetching(false)
+      }
+    }
+
+    fetchSources()
+  }, [isDashboard])
 
   const isFormValid =
     rows.length > 0 &&
@@ -89,13 +129,9 @@ const Sources = () => {
 
     setRows((current) => {
       const nextStartId = current.length > 0 ? Math.max(...current.map((row) => row.id)) + 1 : 1
-      const nextRows = Array.from({ length: count }, (_, index) => ({
-        id: nextStartId + index,
-        x: '',
-        facebook: '',
-        reddit: '',
-        youtube: '',
-      }))
+      const nextRows = Array.from({ length: count }, (_, index) =>
+        emptyRow(nextStartId + index)
+      )
 
       return [...current, ...nextRows]
     })
@@ -120,7 +156,7 @@ const Sources = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    if (isLoading) {
+    if (isLoading || isFetching) {
       return
     }
 
@@ -141,19 +177,23 @@ const Sources = () => {
     setIsLoading(true)
 
     try {
-      await dashboardService.saveSources({
+      const payload = {
         sources: rows.map(({ id, ...source }) => source),
-      })
+      }
 
-      // Mark sources step as completed
-      completeStep('sources')
+      await dashboardService.saveSources(payload)
 
-      showToast.success(
-        'Sources saved successfully!'
-      )
+      if (isDashboard) {
+        showToast.success('Sources saved successfully!')
+      } else {
+        // Mark sources step as completed
+        completeStep('sources')
 
-      // Move to next onboarding step
-      navigate('/onboarding/publishers')
+        showToast.success('Sources saved successfully!')
+
+        // Move to next onboarding step
+        navigate('/onboarding/publishers')
+      }
 
     } catch (error) {
       const message =
@@ -194,8 +234,8 @@ const Sources = () => {
             <Button
               type='submit'
               variant='primary'
-              label={isLoading ? 'SAVING...' : 'NEXT'}
-              disabled={!isFormValid || isLoading}
+              label={isLoading ? 'SAVING...' : isDashboard ? 'SAVE' : 'NEXT'}
+              disabled={!isFormValid || isLoading || isFetching}
               styles='w-full max-w-36'
               size='lg'
             >

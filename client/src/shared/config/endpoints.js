@@ -18,6 +18,7 @@ export const ENDPOINTS = {
   },
 
   DASHBOARD: {
-    // to follow hehe
+    SOURCES: `${CONFIG.API_BASE_URL}/api/dashboard/sources`,
+    PUBLISHERS: `${CONFIG.API_BASE_URL}/api/dashboard/publishers`,
   }
 }

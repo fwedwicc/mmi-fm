@@ -30,7 +30,7 @@ const AppContent = () => {
 
         <Route element={<OnboardingRoute />}>
 
-          <Route path="/onboarding" element={<DashboardLayout />}>
+          <Route path="/onboarding" element={<DashboardLayout mode="onboarding" />}>
 
             <Route
               index
@@ -39,7 +39,7 @@ const AppContent = () => {
 
             <Route
               path="account-info"
-              element={<AccountInformation />}
+              element={<AccountInformation mode="onboarding" />}
             />
 
             <Route
@@ -49,12 +49,12 @@ const AppContent = () => {
 
             <Route
               path="sources"
-              element={<Sources />}
+              element={<Sources mode="onboarding" />}
             />
 
             <Route
               path="publishers"
-              element={<Publishers />}
+              element={<Publishers mode="onboarding" />}
             />
 
             <Route
@@ -72,8 +72,23 @@ const AppContent = () => {
       {/* DASHBOARD */}
       <Route element={<RouteGuard requireCompletedOnboarding />}>
 
-        <Route path="/dashboard" element={<DashboardLayout />}>
+        <Route path="/dashboard" element={<DashboardLayout mode="dashboard" />}>
           <Route index element={<Home />} />
+
+          <Route
+            path="sources"
+            element={<Sources mode="dashboard" />}
+          />
+
+          <Route
+            path="publishers"
+            element={<Publishers mode="dashboard" />}
+          />
+
+          <Route
+            path="account-information"
+            element={<AccountInformation mode="dashboard" />}
+          />
         </Route>
 
       </Route>

@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Button, Input } from '../../shared/components/ui'
 import { useNavigate } from 'react-router-dom'
+import { authService } from '../../shared/service/authService'
 import { dashboardService } from '../../shared/service/dashboardService'
-import { useDashboardStore } from '../../shared/store'
+import { useDashboardStore, useUserStore } from '../../shared/store'
 import { showToast } from '../../shared/utils/toast'
 
-const AccountInformation = () => {
+const emptyFormData = { firstName: '', lastName: '', jobTitle: '' }
+
+const AccountInformation = ({ mode = 'onboarding' }) => {
+  const isDashboard = mode === 'dashboard'
 
   const navigate = useNavigate()
 
@@ -14,13 +18,49 @@ const AccountInformation = () => {
     (state) => state.completeStep
   )
 
-  const [isLoading, setIsLoading] = useState(false)
+  const user = useUserStore((state) => state.user)
+  const token = useUserStore((state) => state.token)
+  const setUser = useUserStore((state) => state.setUser)
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    jobTitle: ''
-  })
+  const [isLoading, setIsLoading] = useState(false)
+  const [isFetching, setIsFetching] = useState(isDashboard)
+
+  const [formData, setFormData] = useState(emptyFormData)
+  const [initialFormData, setInitialFormData] = useState(emptyFormData)
+
+  useEffect(() => {
+    if (!isDashboard) {
+      return
+    }
+
+    const fetchAccountInfo = async () => {
+      setIsFetching(true)
+
+      try {
+        const data = await authService.getMe()
+        const me = data?.user
+
+        const loaded = {
+          firstName: me?.firstName ?? '',
+          lastName: me?.lastName ?? '',
+          jobTitle: me?.jobTitle ?? '',
+        }
+
+        setFormData(loaded)
+        setInitialFormData(loaded)
+      } catch (error) {
+        const message =
+          error.response?.data?.message ||
+          'Failed to load account information. Please try again.'
+
+        showToast.error(message)
+      } finally {
+        setIsFetching(false)
+      }
+    }
+
+    fetchAccountInfo()
+  }, [isDashboard])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -36,31 +76,53 @@ const AccountInformation = () => {
     formData.lastName.trim() !== '' &&
     formData.jobTitle.trim() !== ''
 
+  const isDirty =
+    formData.firstName !== initialFormData.firstName ||
+    formData.lastName !== initialFormData.lastName ||
+    formData.jobTitle !== initialFormData.jobTitle
+
+  const isSaveDisabled =
+    !isFormValid ||
+    isLoading ||
+    isFetching ||
+    (isDashboard && !isDirty)
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!isFormValid || isLoading) {
+    if (isSaveDisabled) {
       return
     }
 
     setIsLoading(true)
 
     try {
-      await dashboardService.updateAccountInformation({
+      const payload = {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
         jobTitle: formData.jobTitle.trim()
-      })
+      }
 
-      // Mark account information step as completed
-      completeStep('accountInfo')
+      await dashboardService.updateAccountInformation(payload)
 
-      showToast.success(
-        'Account information saved successfully!'
-      )
+      if (isDashboard) {
+        // Keep the store in sync (sidebar profile popup reads from it)
+        setUser({ ...user, ...payload }, token)
 
-      // Move to next onboarding step
-      navigate('/onboarding/keywords')
+        // Reset the "dirty" baseline so Save disables again until next edit
+        setFormData(payload)
+        setInitialFormData(payload)
+
+        showToast.success('Account information saved successfully!')
+      } else {
+        // Mark account information step as completed
+        completeStep('accountInfo')
+
+        showToast.success('Account information saved successfully!')
+
+        // Move to next onboarding step
+        navigate('/onboarding/keywords')
+      }
 
     } catch (error) {
       const message =
@@ -124,12 +186,10 @@ const AccountInformation = () => {
           <Button
             type='submit'
             variant='primary'
-            label='NEXT'
-            label={isLoading ? 'SAVING...' : 'NEXT'}
-            disabled={!isFormValid || isLoading}
+            label={isLoading ? 'SAVING...' : isDashboard ? 'SAVE' : 'NEXT'}
+            disabled={isSaveDisabled}
             styles='w-full'
           >
-            {/* {isLoading && <Spinner size='18' />} */}
           </Button>
         </form>
       </div>
